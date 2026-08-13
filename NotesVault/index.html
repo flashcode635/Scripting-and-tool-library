@@ -1,0 +1,907 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Web Notes</title>
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- CSS Stylesheets -->
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="codeThemes.css" />
+
+    <!-- Fonts & Scripts -->
+    <script src="./script.js" defer></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- <style>
+    :root {
+      --bg-dark: #070709;
+      --bg-deep: #0a0a0c;
+      --bg-sidebar: #121215;
+      --accent: #888890;
+      --pink: #b0b0ba;
+      --red: #f38ba8;
+      --green: #a6e3a1;
+      --yellow: #f9e2af;
+      --blue: #89b4fa;
+      --teal: #94e2d5;
+      --text-main: #cdd6f4;
+      --text-muted: #a6adc8;
+      --border: #242429;
+      --hover: #313138;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+      background: radial-gradient(1100px 700px at 85% -10%, rgba(255,255,255,0.03), transparent),
+                  radial-gradient(900px 600px at -10% 110%, rgba(255,255,255,0.02), transparent),
+                  var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    ::selection { background: rgba(255,255,255,0.2); }
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 8px;
+      border: 3px solid var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--hover); }
+
+    /* ---------- Welcome Screen ---------- */
+    #welcome-screen {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 7, 9, 0.85);
+      backdrop-filter: blur(14px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .welcome-card {
+      background: rgba(18, 18, 21, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 56px;
+      text-align: center;
+      max-width: 460px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.05) inset;
+      animation: pop .45s cubic-bezier(.2,.9,.3,1.2);
+    }
+    @keyframes pop { from { transform: translateY(14px) scale(.96); opacity: 0; } }
+    .logo {
+      width: 68px; height: 68px;
+      margin: 0 auto 18px;
+      display: grid; place-items: center;
+      font-size: 30px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #16161a, #242429);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .welcome-card h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #ffffff, var(--text-muted));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .welcome-card p { color: var(--text-muted); margin-bottom: 26px; line-height: 1.6; font-size: .95rem; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2a2a30, #16161a);
+      color: #ffffff;
+      border: 1px solid var(--border);
+      padding: 13px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all .2s;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 10px 28px rgba(0,0,0,0.6); }
+    .btn-primary:active { transform: translateY(0) scale(.98); }
+    .hint { display: block; margin-top: 18px; font-size: .75rem; color: var(--text-muted); }
+    .hint code { background: var(--border); padding: 2px 6px; border-radius: 5px; color: var(--yellow); }
+
+    /* ---------- Sidebar ---------- */
+    #sidebar {
+      width: 280px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .vault-label {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .sidebar-header h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 130px;
+    }
+    .header-actions { display: flex; gap: 6px; }
+    .btn-icon {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: .95rem;
+      transition: all .15s;
+    }
+    .btn-icon:hover { background: var(--hover); border-color: var(--accent); transform: translateY(-1px); }
+    .btn-icon:active { transform: scale(.95); }
+
+    #note-list { list-style: none; overflow-y: auto; flex-grow: 1; padding: 8px; }
+    .note-item {
+      padding: 11px 12px;
+      margin-bottom: 2px;
+      cursor: pointer;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background .15s;
+      border-left: 3px solid transparent;
+    }
+    .note-item:hover { background: rgba(49, 49, 56, 0.4); }
+    .note-item.active {
+      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
+      border-left-color: #ffffff;
+    }
+    .note-item .note-name {
+      display: flex; align-items: center; gap: 9px;
+      font-size: .9rem; font-weight: 500;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .note-item .note-name::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .55;
+      flex-shrink: 0;
+    }
+    .delete-btn {
+      color: var(--red);
+      font-size: .8rem;
+      opacity: 0;
+      padding: 2px 7px;
+      border-radius: 6px;
+      transition: all .15s;
+    }
+    .note-item:hover .delete-btn { opacity: 1; }
+    .delete-btn:hover { background: rgba(243,139,168,0.15); }
+
+    /* ---------- Main / Toolbar ---------- */
+    #main-app { flex-grow: 1; display: flex; flex-direction: column;padding-bottom: 20px; }
+    .toolbar {
+      padding: 8px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(18, 18, 21, 0.8);
+      backdrop-filter: blur(10px);
+      font-family: monospace;
+    }
+    .tb-group {
+      display: flex; gap: 4px;
+      padding-right: 10px; margin-right: 6px;
+      border-right: 1px solid var(--border);
+    }
+    .tb-group:last-of-type { border-right: none; }
+    .toolbar button {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      padding: 5px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      
+      font-size: .85rem;
+      transition: all .15s;
+    }
+    button{
+      font-family: inherit;
+    }
+    .toolbar button:hover { background: var(--hover); border-color: var(--border); transform: translateY(-1px); }
+    .toolbar button:active { transform: scale(.95); }
+
+    .save-pill {
+      margin-left: auto;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .3px;
+      transition: all .25s;
+    }
+    .save-pill::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+    }
+    .save-pill[data-state="saved"]  { background: rgba(166,227,161,.1);  color: var(--green);  border: 1px solid rgba(166,227,161,.25); }
+    .save-pill[data-state="unsaved"],
+    .save-pill[data-state="saving"] { background: rgba(249,226,175,.1);  color: var(--yellow); border: 1px solid rgba(249,226,175,.25); }
+    .save-pill[data-state="error"]  { background: rgba(243,139,168,.12); color: var(--red);    border: 1px solid rgba(243,139,168,.3); }
+
+    /* ---------- Editor ---------- */
+    #editor-container {
+      flex-grow: 1;
+      padding: 44px 56px 40px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      max-width: 920px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    #note-title {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      outline: none;
+      margin-bottom: 22px;
+      caret-color: #ffffff;
+    }
+    #note-title::placeholder { color: rgba(166,173,200,0.4); }
+
+    #editor {
+      flex-grow: 1;
+      outline: none;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      caret-color: #ffffff;
+      min-height: 300px;
+      padding-bottom: 5px; /* requested extra bottom breathing room */
+    }
+
+    /* Code Block Styles */
+    #editor pre {
+      background: #111116;
+      color: #a6e3a1;
+      font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+      font-size: 0.92rem;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+      overflow-x: auto;
+    }
+    #editor code {
+      font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: #a6e3a1;
+    }
+    #editor pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* Teeno headers — naye colours */
+    #editor h1 {
+      font-size: 1.7rem;
+      margin: .9em 0 .4em;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      font-weight: 800;
+    }
+    #editor h2 {
+      font-size: 1.35rem;
+      margin: .9em 0 .4em;
+      color: var(--blue); /* Blue */
+      font-weight: 700;
+    }
+    #editor h3 {
+      font-size: 1.15rem;
+      margin: .8em 0 .35em;
+      color: var(--teal); /* Teal */
+      font-weight: 600;
+    }
+
+    #editor p  { margin: .45em 0; }
+    #editor ul, #editor ol { padding-left: 1.5em; margin: .45em 0; }
+    #editor a { color: var(--accent); }
+    #editor blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 14px;
+      color: var(--text-muted);
+      margin: .6em 0;
+    }
+    #editor img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin: 12px 0;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.4);
+    }
+  </style> -->
+  </head>
+  <body>
+    <!-- Welcome Overlay -->
+    <div id="welcome-screen">
+      <div class="welcome-card">
+        <div class="logo">📝</div>
+        <h1>Local Web Notes</h1>
+        <p>
+          Select a folder on your computer to use as your vault. Notes save
+          directly to disk — or fall back to Browser Storage.
+        </p>
+        <button class="btn-primary" onclick="initVault()">
+          Select Vault Folder
+        </button>
+        <span class="hint"
+          >Brave users: enable
+          <code>brave://flags/#file-system-access-api</code></span
+        >
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div class="sidebar-header">
+        <div>
+          <span class="vault-label">Vault Notes</span>
+          <h2 id="vault-name">—</h2>
+        </div>
+        <div class="header-actions">
+          <button
+            class="btn-icon"
+            onclick="exportVault()"
+            title="Export vault as ZIP"
+          >
+            ⬇️
+          </button>
+          <button class="btn-icon" onclick="createNewNote()" title="New note">
+            ＋
+          </button>
+        </div>
+      </div>
+      <ul id="note-list"></ul>
+    </div>
+
+    <!-- Editor -->
+    <div id="main-app">
+      <div class="toolbar">
+        <div class="tb-group">
+          <button onclick="execCmd('bold')" title="Bold"><b>B</b></button>
+          <button onclick="execCmd('italic')" title="Italic"><i>I</i></button>
+          <button onclick="execCmd('underline')" title="Underline">
+            <u>U</u>
+          </button>
+        </div>
+        <div class="tb-group">
+          <button onclick="execCmd('formatBlock', '<h1>')" title="Heading 1">
+            H1
+          </button>
+          <button onclick="execCmd('formatBlock', '<h2>')" title="Heading 2">
+            H2
+          </button>
+          <button onclick="execCmd('formatBlock', '<h3>')" title="Heading 3">
+            H3
+          </button>
+        </div>
+        <div class="tb-group">
+          <button onclick="execCmd('insertUnorderedList')" title="Bullet list">
+            • List
+          </button>
+          <button onclick="execCmd('insertOrderedList')" title="Numbered list">
+            1. List
+          </button>
+        </div>
+        <div class="tb-group">
+          <button onclick="insertCodeBlock()" title="Code Block">
+            <code>&lt;/&gt;</code>
+          </button>
+        </div>
+        <div class="tb-group">
+          <button onclick="renameCurrentNote()" title="Rename File">
+            ✏️ Rename File
+          </button>
+        </div>
+        <span class="save-pill" id="save-status" data-state="saved">Saved</span>
+      </div>
+
+      <div id="editor-container">
+        <input type="text" id="note-title" placeholder="Untitled Note..." />
+        <div id="editor" contenteditable="true" spellcheck="false"></div>
+      </div>
+    </div>
+
+    <!-- <script>
+    // ---------- State ----------
+    let vaultHandle = null;
+    let notesHandle = null;
+    let attachmentsHandle = null;
+
+    let currentNoteFileName = null;
+    let autoSaveTimer = null;
+    let saveErrorShown = false;
+
+    let useLocalStorage = false;
+    let localNotes = {};
+
+    // ---------- UI helpers ----------
+    function setSaveStatus(state, text) {
+      const el = document.getElementById('save-status');
+      el.dataset.state = state;
+      el.textContent = text;
+    }
+
+    // ---------- LocalStorage helpers ----------
+    function loadFromLocalStorage() {
+      const saved = localStorage.getItem('localWebNotes');
+      localNotes = saved ? JSON.parse(saved) : {};
+    }
+
+    function saveToLocalStorage() {
+      try {
+        localStorage.setItem('localWebNotes', JSON.stringify(localNotes));
+      } catch (e) {
+        alert("Browser storage full (~5MB limit). Delete some notes/images, or export the ZIP and clean up.");
+      }
+    }
+
+    // ---------- Folder helpers ----------
+    async function getOrCreateDir(parent, name) {
+      try {
+        const existing = await parent.getDirectoryHandle(name);
+        console.log(`[Vault] Folder "${name}" already exists — using it.`);
+        return existing;
+      } catch (e) {
+        if (e.name === 'NotFoundError') {
+          console.log(`[Vault] Folder "${name}" missing — creating it.`);
+          return await parent.getDirectoryHandle(name, { create: true });
+        }
+        throw e;
+      }
+    }
+
+    async function ensureWritePermission() {
+      if (!vaultHandle || !vaultHandle.queryPermission) return;
+      let status = await vaultHandle.queryPermission({ mode: 'readwrite' });
+      if (status !== 'granted' && vaultHandle.requestPermission) {
+        status = await vaultHandle.requestPermission({ mode: 'readwrite' });
+      }
+      if (status !== 'granted') throw new Error('Write permission not granted');
+    }
+
+    // ---------- 1. Init Vault ----------
+    async function initVault() {
+      if (!('showDirectoryPicker' in window)) {
+        const useFallback = confirm(
+          "File System Access API is not available here.\n\n" +
+          "(Brave users: enable brave://flags/#file-system-access-api first)\n\n" +
+          "Use 'Browser Storage' mode instead? Notes stay inside the browser and can be exported as a ZIP anytime."
+        );
+        if (useFallback) {
+          useLocalStorage = true;
+          document.getElementById('vault-name').innerText = "My Vault";
+          document.getElementById('welcome-screen').style.display = 'none';
+          loadFromLocalStorage();
+          const names = await refreshNoteList();
+          if (names.length) await openNote(names[0]);
+          else await createNewNote();
+        } else {
+          alert("For folder mode: use Chrome/Chromium/Edge (or Brave with the flag enabled) and open via http://localhost:8000");
+        }
+        return;
+      }
+
+      try {
+        vaultHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+        await ensureWritePermission();
+
+        notesHandle = await getOrCreateDir(vaultHandle, 'notes');
+        attachmentsHandle = await getOrCreateDir(vaultHandle, 'attachments');
+
+        document.getElementById('vault-name').innerText = vaultHandle.name;
+        document.getElementById('welcome-screen').style.display = 'none';
+
+        const names = await refreshNoteList();
+        if (names.length) await openNote(names[0]);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error("Vault Init Error:", err);
+          alert("Error accessing folder: " + err.message);
+        }
+      }
+    }
+
+    // ---------- 2. Note List ----------
+    async function getNoteNames() {
+      const names = [];
+      if (useLocalStorage) {
+        names.push(...Object.keys(localNotes).filter(n => n.endsWith('.html')));
+      } else if (notesHandle) {
+        for await (const entry of notesHandle.values()) {
+          if (entry.kind === 'file' && entry.name.endsWith('.html')) names.push(entry.name);
+        }
+      }
+      return names.sort();
+    }
+
+    async function refreshNoteList() {
+      const names = await getNoteNames();
+      const listEl = document.getElementById('note-list');
+      listEl.innerHTML = '';
+      names.forEach(addNoteListItem);
+      return names;
+    }
+
+    function addNoteListItem(fileName) {
+      const li = document.createElement('li');
+      li.className = 'note-item' + (fileName === currentNoteFileName ? ' active' : '');
+      const titleText = fileName.replace('.html', '');
+      li.innerHTML = `
+        <span class="note-name" onclick="openNote('${fileName}')">${titleText}</span>
+        <span class="delete-btn" onclick="deleteNote('${fileName}', event)">✕</span>
+      `;
+      document.getElementById('note-list').appendChild(li);
+    }
+
+    // ---------- 3. Create Note ----------
+    async function createNewNote() {
+      const baseName = "Untitled";
+      let fileName = `${baseName}.html`;
+      let counter = 1;
+
+      try {
+        if (useLocalStorage) {
+          while (localNotes[fileName]) fileName = `${baseName}_${counter++}.html`;
+          localNotes[fileName] = `<h1>${fileName.replace('.html', '')}</h1><p></p>`;
+          saveToLocalStorage();
+        } else {
+          if (!notesHandle) return;
+          while (await fileExists(notesHandle, fileName)) fileName = `${baseName}_${counter++}.html`;
+          const fh = await notesHandle.getFileHandle(fileName, { create: true });
+          const w = await fh.createWritable();
+          await w.write(`<h1>${fileName.replace('.html', '')}</h1><p></p>`);
+          await w.close();
+        }
+        await refreshNoteList();
+        await openNote(fileName);
+      } catch (err) {
+        console.error("Create failed:", err);
+        alert("Could not create note: " + err.message);
+      }
+    }
+
+    // ---------- 4. Open Note ----------
+    async function openNote(fileName) {
+      currentNoteFileName = fileName;
+      let content = '';
+
+      if (useLocalStorage) {
+        content = localNotes[fileName] || '';
+      } else {
+        const fh = await notesHandle.getFileHandle(fileName);
+        const file = await fh.getFile();
+        content = await file.text();
+      }
+
+      document.getElementById('note-title').value = fileName.replace('.html', '');
+
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = content;
+
+      const h1 = tempDiv.querySelector('h1');
+      if (h1) h1.remove();
+
+      if (!useLocalStorage) {
+        for (let img of tempDiv.querySelectorAll('img')) {
+          const src = img.getAttribute('src');
+          if (src && src.startsWith('../attachments/')) {
+            const imageName = src.replace('../attachments/', '');
+            try {
+              const imgFile = await (await attachmentsHandle.getFileHandle(imageName)).getFile();
+              img.src = URL.createObjectURL(imgFile);
+              img.dataset.filename = imageName;
+            } catch (e) {
+              console.error("Image load failed:", imageName);
+            }
+          }
+        }
+      }
+
+      document.getElementById('editor').innerHTML = tempDiv.innerHTML;
+      setSaveStatus('saved', 'Saved');
+      await refreshNoteList();
+    }
+
+    // ---------- 5. Save Note ----------
+    async function saveCurrentNote() {
+      if (!currentNoteFileName) return;
+      setSaveStatus('saving', 'Saving…');
+
+      try {
+        const title = document.getElementById('note-title').value.trim() || 'Untitled';
+        const editorDiv = document.getElementById('editor').cloneNode(true);
+
+        if (useLocalStorage) {
+          localNotes[currentNoteFileName] = `<h1>${title}</h1>\n${editorDiv.innerHTML}`;
+          saveToLocalStorage();
+        } else {
+          await ensureWritePermission();
+
+          editorDiv.querySelectorAll('img').forEach(img => {
+            if (img.dataset.filename) {
+              img.src = `../attachments/${img.dataset.filename}`;
+              img.removeAttribute('data-filename');
+            }
+          });
+
+          const fh = await notesHandle.getFileHandle(currentNoteFileName, { create: true });
+          const w = await fh.createWritable();
+          await w.write(`<h1>${title}</h1>\n${editorDiv.innerHTML}`);
+          await w.close();
+        }
+
+        saveErrorShown = false;
+        setSaveStatus('saved', 'Saved');
+      } catch (err) {
+        console.error("Save failed:", err);
+        setSaveStatus('error', 'Save failed');
+        if (!saveErrorShown) {
+          saveErrorShown = true;
+          alert("Save failed: " + err.message + "\n\nIf this is a permission issue, reload the page and select the vault folder again.");
+        }
+      }
+    }
+
+    function triggerAutoSave() {
+      setSaveStatus('unsaved', 'Unsaved…');
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(saveCurrentNote, 500);
+    }
+
+    document.getElementById('editor').addEventListener('input', triggerAutoSave);
+    document.getElementById('note-title').addEventListener('input', triggerAutoSave);
+
+    // Ctrl+S = instant save
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        saveCurrentNote();
+      }
+    });
+
+    // ---------- Rename File Helper ----------
+    async function renameCurrentNote() {
+      if (!currentNoteFileName) return;
+      const currentRawName = currentNoteFileName.replace('.html', '');
+      const inputName = prompt("Enter new filename:", currentRawName);
+      if (!inputName || inputName.trim() === '' || inputName.trim() === currentRawName) return;
+
+      const cleanName = inputName.trim().replace(/[/\\?%*:|"<>]/g, '');
+      const newFileName = `${cleanName}.html`;
+
+      try {
+        if (useLocalStorage) {
+          if (localNotes[newFileName]) {
+            alert("A note with this file name already exists.");
+            return;
+          }
+          localNotes[newFileName] = localNotes[currentNoteFileName];
+          delete localNotes[currentNoteFileName];
+          saveToLocalStorage();
+        } else {
+          if (await fileExists(notesHandle, newFileName)) {
+            alert("A file with this name already exists in the vault.");
+            return;
+          }
+          await saveCurrentNote(); // Commit latest buffer changes
+          const oldFileHandle = await notesHandle.getFileHandle(currentNoteFileName);
+          const file = await oldFileHandle.getFile();
+          const content = await file.text();
+
+          const newFileHandle = await notesHandle.getFileHandle(newFileName, { create: true });
+          const w = await newFileHandle.createWritable();
+          await w.write(content);
+          await w.close();
+
+          await notesHandle.removeEntry(currentNoteFileName);
+        }
+
+        currentNoteFileName = newFileName;
+        await refreshNoteList();
+        await openNote(newFileName);
+      } catch (err) {
+        console.error("Rename failed:", err);
+        alert("Failed to rename file: " + err.message);
+      }
+    }
+
+    // ---------- Insert Code Block ----------
+    function insertCodeBlock() {
+      const selection = window.getSelection();
+      let selectedText = selection.toString();
+      
+      const preTag = document.createElement('pre');
+      const codeTag = document.createElement('code');
+      codeTag.textContent = selectedText || '// Enter code here...';
+      preTag.appendChild(codeTag);
+
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(preTag);
+      } else {
+        document.getElementById('editor').appendChild(preTag);
+      }
+
+      // Add trailing paragraph to step out of block easily
+      const p = document.createElement('p');
+      p.innerHTML = '<br>';
+      preTag.after(p);
+
+      triggerAutoSave();
+    }
+
+    // ---------- 6. Image Paste ----------
+    document.getElementById('editor').addEventListener('paste', async (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          e.preventDefault();
+          const file = item.getAsFile();
+
+          if (useLocalStorage) {
+            const reader = new FileReader();
+            reader.onload = (event) => insertImageToEditor(event.target.result);
+            reader.readAsDataURL(file);
+          } else {
+            const ext = file.type.split('/')[1] || 'png';
+            const imageName = `img_${Date.now()}.${ext}`;
+
+            const imgHandle = await attachmentsHandle.getFileHandle(imageName, { create: true });
+            const w = await imgHandle.createWritable();
+            await w.write(file);
+            await w.close();
+
+            insertImageToEditor(URL.createObjectURL(file), imageName);
+          }
+        }
+      }
+    });
+
+    function insertImageToEditor(src, filename = null) {
+      const imgTag = document.createElement('img');
+      imgTag.src = src;
+      if (filename) imgTag.dataset.filename = filename;
+
+      const selection = window.getSelection();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        range.insertNode(imgTag);
+        range.collapse(false);
+      } else {
+        document.getElementById('editor').appendChild(imgTag);
+      }
+      triggerAutoSave();
+    }
+
+    // ---------- 7. Delete Note ----------
+    async function deleteNote(fileName, event) {
+      event.stopPropagation();
+      if (confirm(`Delete "${fileName}"?`)) {
+        if (useLocalStorage) {
+          delete localNotes[fileName];
+          saveToLocalStorage();
+        } else {
+          await notesHandle.removeEntry(fileName);
+        }
+        if (currentNoteFileName === fileName) {
+          currentNoteFileName = null;
+          document.getElementById('note-title').value = '';
+          document.getElementById('editor').innerHTML = '';
+        }
+        await refreshNoteList();
+      }
+    }
+
+    // ---------- 8. Export Vault (ZIP) ----------
+    async function exportVault() {
+      if (!useLocalStorage) {
+        alert("Folder mode is active — notes are already saved on your disk 🙂");
+        return;
+      }
+      if (Object.keys(localNotes).length === 0) {
+        alert("No notes to export!");
+        return;
+      }
+      if (typeof JSZip === 'undefined') {
+        alert("JSZip library could not load. Check your internet connection.");
+        return;
+      }
+
+      setSaveStatus('saving', 'Exporting…');
+      const zip = new JSZip();
+      const notesFolder = zip.folder("notes");
+      for (const [fileName, content] of Object.entries(localNotes)) {
+        notesFolder.file(fileName, content);
+      }
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "LocalWebNotes_Vault.zip";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+
+      setSaveStatus('saved', 'Exported!');
+      setTimeout(() => setSaveStatus('saved', 'Saved'), 2000);
+    }
+
+    // ---------- Helpers ----------
+    async function fileExists(dirHandle, fileName) {
+      try { await dirHandle.getFileHandle(fileName); return true; } catch { return false; }
+    }
+
+    function execCmd(command, value = null) {
+      document.execCommand(command, false, value);
+      triggerAutoSave();
+    }
+
+    // Toolbar buttons selection ko steal na karein
+    document.querySelectorAll('.toolbar button').forEach(b =>
+      b.addEventListener('mousedown', e => e.preventDefault())
+    );
+  </script> -->
+  </body>
+</html>

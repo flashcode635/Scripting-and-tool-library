@@ -1,0 +1,213 @@
+/* ==========================================================================
+   Code Themes CSS (VS Code Dark+ Style Theme)
+   ========================================================================== */
+
+/* Editor & Standalone Code Blocks Base */
+pre, 
+#editor pre {
+  background-color: #1E1E1E !important;
+  color: #D4D4D4 !important;
+  font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--border, #242429);
+  margin: 1rem 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-x: auto;
+}
+
+/* Inline Code Element */
+code, 
+#editor code {
+  font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+  background-color: #1E1E1E;
+  color: #D4D4D4;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* Reset for code tags inside pre */
+pre code, 
+#editor pre code {
+  background: transparent !important;
+  padding: 0 !important;
+  color: inherit !important;
+}
+
+/* ==========================================================================
+   Syntax Token Colors
+   (Selectors cover both highlight.js's actual "hljs-*" classes and the
+   generic token-* / bare names, in case another tokenizer is used later)
+   ========================================================================== */
+
+/* Keywords & Booleans */
+.hljs-keyword,
+.hljs-literal,
+.token-keyword,
+.token-boolean,
+.keyword,
+.boolean {
+  color: #569CD6;
+  font-weight: 600;
+}
+
+/* Functions */
+.hljs-title.function_,
+.hljs-title.function,
+.hljs-built_in,
+.token-function,
+.function,
+.method {
+  color: #DCDCAA;
+}
+
+/* Variables & Properties */
+.hljs-variable,
+.hljs-params,
+.hljs-attr,
+.token-variable,
+.token-property,
+.variable,
+.property {
+  color: #9CDCFE;
+}
+
+/* Constants */
+.hljs-variable.constant_,
+.hljs-symbol,
+.token-constant,
+.constant {
+  color: #4FC1FF;
+}
+
+/* Strings */
+.hljs-string,
+.hljs-regexp,
+.token-string,
+.string {
+  color: #CE9178;
+}
+
+/* Numbers */
+.hljs-number,
+.token-number,
+.number {
+  color: #B5CEA8;
+}
+
+/* Comments */
+.hljs-comment,
+.hljs-quote,
+.token-comment,
+.comment {
+  color: #6A9955;
+  font-style: italic;
+}
+
+/* Types, Classes & JSX Tags */
+.hljs-title.class_,
+.hljs-title.class,
+.hljs-type,
+.hljs-name,
+.token-type,
+.token-class,
+.token-jsx-tag,
+.type,
+.class-name,
+.jsx-tag {
+  color: #4EC9B0;
+}
+
+/* Operators */
+.hljs-operator,
+.hljs-punctuation,
+.token-operator,
+.operator {
+  color: #D4D4D4;
+}
+
+/* HTML Tags */
+.hljs-tag,
+.token-html-tag,
+.tag {
+  color: #569CD6;
+}
+
+/* HTML / JSX Attributes & JSON Keys */
+.hljs-attribute,
+.hljs-selector-attr,
+.token-attribute,
+.token-json-key,
+.attr-name,
+.property-key {
+  color: #9CDCFE;
+}
+
+/* Misc highlight.js classes with no explicit mapping above */
+.hljs-meta,
+.hljs-doctag {
+  color: #C586C0;
+}
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 700; }
+.hljs-addition { color: #B5CEA8; }
+.hljs-deletion { color: #F38BA8; }
+
+/* ==========================================================================
+   Code Block Wrapper (language picker header + snippet body)
+   ========================================================================== */
+
+#editor .code-block-wrapper {
+  margin: 1rem 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  background-color: #1E1E1E;
+}
+
+/* The <pre> sits flush inside the wrapper — the wrapper now owns the
+   margin/border/radius, so strip them here to avoid a double box. */
+#editor .code-block-wrapper pre {
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+#editor .code-block-wrapper,
+#editor .code-block-wrapper pre,
+#editor .code-block-wrapper code {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+#editor .code-block-wrapper:focus-within {
+  border-color: transparent !important;
+}
+
+#editor .code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 6px 10px;
+  background: #17171b;
+  border-bottom: 1px solid var(--border, #242429);
+}
+
+#editor .code-lang-select {
+  background: #1E1E1E;
+  color: #9CDCFE;
+  border: 1px solid var(--border, #242429);
+  border-radius: 6px;
+  font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color .15s;
+}
+#editor .code-lang-select:hover  { border-color: var(--accent, #888890); }
+#editor .code-lang-select:focus  { border-color: #569CD6; }

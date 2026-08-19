@@ -7,6 +7,7 @@ Small collection of helper scripts for my day to day tasks.
 - `linux/gitpush (updated)/gitpush.sh` — Feature-rich helper for Linux: commit, amend, reuse last message, optional pull before push, and controlled force pushes (`--force-with-lease`).
 - `windows/gitpush/gitpush.sh` — Minimal script for committing and pushing from the current repository on Windows; requires a commit message and branch.
 - `linux/mouse/mouse.sh` — Utility to unload and reload the `i2c_hid_acpi` kernel module (touchpad/mouse reset).
+- `linux/mouse/start.sh` — Automate the start up commands for linux.
 - `office/script.js` — Used to bulk select check boxes in platforms like zoho marketing; operaitons ka kaam easily krne ke liye.
 - `NotesVault` — Simple Note taking app. Minimal, Browser based, works fine.
 

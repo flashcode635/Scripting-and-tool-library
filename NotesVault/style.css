@@ -1,0 +1,346 @@
+
+    :root {
+      --bg-dark: #070709;
+      --bg-deep: #0a0a0c;
+      --bg-sidebar: #121215;
+      --accent: #888890;
+      --pink: #b0b0ba;
+      --red: #f38ba8;
+      --green: #a6e3a1;
+      --yellow: #f9e2af;
+      --blue: #89b4fa;
+      --teal: #94e2d5;
+      --text-main: #cdd6f4;
+      --text-muted: #a6adc8;
+      --border: #242429;
+      --hover: #313138;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+      background: radial-gradient(1100px 700px at 85% -10%, rgba(255,255,255,0.03), transparent),
+                  radial-gradient(900px 600px at -10% 110%, rgba(255,255,255,0.02), transparent),
+                  var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    ::selection { background: rgba(255,255,255,0.2); }
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 8px;
+      border: 3px solid var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--hover); }
+
+    /* ---------- Welcome Screen ---------- */
+    #welcome-screen {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 7, 9, 0.85);
+      backdrop-filter: blur(14px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .welcome-card {
+      background: rgba(18, 18, 21, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 56px;
+      text-align: center;
+      max-width: 460px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.05) inset;
+      animation: pop .45s cubic-bezier(.2,.9,.3,1.2);
+    }
+    @keyframes pop { from { transform: translateY(14px) scale(.96); opacity: 0; } }
+    .logo {
+      width: 68px; height: 68px;
+      margin: 0 auto 18px;
+      display: grid; place-items: center;
+      font-size: 30px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #16161a, #242429);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .welcome-card h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #ffffff, var(--text-muted));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .welcome-card p { color: var(--text-muted); margin-bottom: 26px; line-height: 1.6; font-size: .95rem; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2a2a30, #16161a);
+      color: #ffffff;
+      border: 1px solid var(--border);
+      padding: 13px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all .2s;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 10px 28px rgba(0,0,0,0.6); }
+    .btn-primary:active { transform: translateY(0) scale(.98); }
+    .hint { display: block; margin-top: 18px; font-size: .75rem; color: var(--text-muted); }
+    .hint code { background: var(--border); padding: 2px 6px; border-radius: 5px; color: var(--yellow); }
+
+    /* ---------- Sidebar ---------- */
+    #sidebar {
+      width: 280px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .vault-label {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .sidebar-header h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 130px;
+    }
+    .header-actions { display: flex; gap: 6px; }
+    .btn-icon {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: .95rem;
+      transition: all .15s;
+    }
+    .btn-icon:hover { background: var(--hover); border-color: var(--accent); transform: translateY(-1px); }
+    .btn-icon:active { transform: scale(.95); }
+
+    #note-list { list-style: none; overflow-y: auto; flex-grow: 1; padding: 8px; }
+    .note-item {
+      padding: 11px 12px;
+      margin-bottom: 2px;
+      cursor: pointer;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background .15s;
+      border-left: 3px solid transparent;
+    }
+    .note-item:hover { background: rgba(49, 49, 56, 0.4); }
+    .note-item.active {
+      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
+      border-left-color: #ffffff;
+    }
+    .note-item .note-name {
+      display: flex; align-items: center; gap: 9px;
+      font-size: .9rem; font-weight: 500;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .note-item .note-name::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .55;
+      flex-shrink: 0;
+    }
+    .delete-btn {
+      color: var(--red);
+      font-size: .8rem;
+      opacity: 0;
+      padding: 2px 7px;
+      border-radius: 6px;
+      transition: all .15s;
+    }
+    .note-item:hover .delete-btn { opacity: 1; }
+    .delete-btn:hover { background: rgba(243,139,168,0.15); }
+
+    /* ---------- Main / Toolbar ---------- */
+    #main-app { flex-grow: 1; display: flex; flex-direction: column;padding-bottom: 20px; }
+    .toolbar {
+      padding: 8px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(18, 18, 21, 0.8);
+      backdrop-filter: blur(10px);
+      font-family: monospace;
+    }
+    .tb-group {
+      display: flex; gap: 4px;
+      padding-right: 10px; margin-right: 6px;
+      border-right: 1px solid var(--border);
+    }
+    .tb-group:last-of-type { border-right: none; }
+    .toolbar button {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      padding: 5px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      
+      font-size: .85rem;
+      transition: all .15s;
+    }
+    button{
+      font-family: inherit;
+    }
+    .toolbar button:hover { background: var(--hover); border-color: var(--border); transform: translateY(-1px); }
+    .toolbar button:active { transform: scale(.95); }
+
+    .save-pill {
+      margin-left: auto;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .3px;
+      transition: all .25s;
+    }
+    .save-pill::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+    }
+    .save-pill[data-state="saved"]  { background: rgba(166,227,161,.1);  color: var(--green);  border: 1px solid rgba(166,227,161,.25); }
+    .save-pill[data-state="unsaved"],
+    .save-pill[data-state="saving"] { background: rgba(249,226,175,.1);  color: var(--yellow); border: 1px solid rgba(249,226,175,.25); }
+    .save-pill[data-state="error"]  { background: rgba(243,139,168,.12); color: var(--red);    border: 1px solid rgba(243,139,168,.3); }
+
+    /* ---------- Editor ---------- */
+    #editor-container {
+      flex-grow: 1;
+      padding: 44px 56px 40px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      max-width: 920px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    #note-title {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      outline: none;
+      margin-bottom: 22px;
+      caret-color: #ffffff;
+    }
+    #note-title::placeholder { color: rgba(166,173,200,0.4); }
+
+    #editor {
+      flex-grow: 1;
+      outline: none;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      caret-color: #ffffff;
+      min-height: 300px;
+      padding-bottom: 5px; /* requested extra bottom breathing room */
+    }
+
+    /* Code Block Styles */
+    #editor pre {
+      background: #111116;
+      color: #a6e3a1;
+      font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+      font-size: 0.92rem;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+      overflow-x: auto;
+    }
+    #editor code {
+      font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: #a6e3a1;
+    }
+    #editor pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* Teeno headers — naye colours */
+    #editor h1 {
+      font-size: 1.7rem;
+      margin: .9em 0 .4em;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      font-weight: 800;
+    }
+    #editor h2 {
+      font-size: 1.35rem;
+      margin: .9em 0 .4em;
+      color: var(--blue); /* Blue */
+      font-weight: 700;
+    }
+    #editor h3 {
+      font-size: 1.15rem;
+      margin: .8em 0 .35em;
+      color: var(--teal); /* Teal */
+      font-weight: 600;
+    }
+
+    #editor p  { margin: .45em 0; }
+    #editor ul, #editor ol { padding-left: 1.5em; margin: .45em 0; }
+    #editor a { color: var(--accent); }
+    #editor blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 14px;
+      color: var(--text-muted);
+      margin: .6em 0;
+    }
+    #editor img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin: 12px 0;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.4);
+    }

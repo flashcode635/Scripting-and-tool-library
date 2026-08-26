@@ -4,7 +4,7 @@
 # CONFIGURATION - Change these as needed
 # ============================================
 COMMAND_NAME="notes"           # The command you want to type to run this
-PROJECT_PATH="$HOME/Desktop/python_ Ramit/VS-code/NotesVault" # Your project path
+PROJECT_PATH="" # Your project path
 # ============================================
 
 # Check if the project directory exists

@@ -1,7 +1,6 @@
 /**
  * @intro :
  * Used for check box a specific names in a webpage - mainly used in zoho.
- * 
  * @guide :
  * Open inspect tab (use F12)
  * open console.

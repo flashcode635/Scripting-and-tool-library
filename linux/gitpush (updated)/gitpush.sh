@@ -13,6 +13,7 @@ show_help() {
     echo ""
     echo "Usage: gitpush \"commit message\" [branch] [options]"
     echo "       gitpush \"\" [branch]              # Update last commit (keep same message)"
+    echo "       gitpush pull [branch]            # Hard pull from GitHub (overwrite local changes)"
     echo ""
     echo "Options:"
     echo "  -h, --help     Show this help message"
@@ -29,6 +30,10 @@ show_help() {
     echo "  gitpush \"\"                       # Reuse last commit message, push to current branch"
     echo "  gitpush \"\" --main                # Reuse last commit message, push to main"
     echo "  gitpush \"Hotfix\" -f              # Force push to current branch"
+    echo "  gitpush pull                     # Hard pull current branch from origin"
+    echo "  gitpush pull main                # Hard pull 'main' from origin"
+    echo ""
+    echo "⚠️  'gitpush pull' will DISCARD all local changes and untracked files!"
 }
 
 # Parse arguments
@@ -39,6 +44,7 @@ force=false
 amend=false
 reuse=false
 force_main=false
+hard_pull=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -63,7 +69,9 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         *)
-            if [ -z "$commit_msg" ] && [ -z "$branch" ]; then
+            if [ "$1" = "pull" ] && [ -z "$commit_msg" ] && [ -z "$branch" ]; then
+                hard_pull=true
+            elif [ -z "$commit_msg" ] && [ -z "$branch" ]; then
                 commit_msg="$1"
             elif [ -z "$branch" ]; then
                 branch="$1"
@@ -72,6 +80,49 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Hard pull mode: fetch + reset --hard + clean -fd
+if [ "$hard_pull" = true ]; then
+    echo -e "${YELLOW}⚠️  HARD PULL: This will overwrite ALL local changes and remove untracked files!${NC}"
+    read -p "Are you sure? (y/N): " confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo -e "${RED}❌ Aborted${NC}"
+        exit 1
+    fi
+
+    # Get current branch if not specified
+    if [ -z "$branch" ]; then
+        branch=$(git branch --show-current 2>/dev/null)
+        if [ -z "$branch" ]; then
+            echo -e "${RED}❌ Error: Not in a git repository${NC}"
+            exit 1
+        fi
+    fi
+
+    # Convert "main" to "master" if master exists (unless --main flag is used)
+    if [ "$branch" = "main" ] && [ "$force_main" = false ]; then
+        if git show-ref --verify --quiet refs/heads/master; then
+            branch="master"
+            echo -e "${YELLOW}🔄 Converting 'main' to 'master' branch${NC}"
+        fi
+    elif [ "$branch" = "main" ] && [ "$force_main" = true ]; then
+        echo -e "${BLUE}✅ Keeping 'main' branch (--main flag used)${NC}"
+    fi
+
+    echo -e "${BLUE}📥 Fetching from origin...${NC}"
+    git fetch origin || exit 1
+
+    echo -e "${BLUE}🔄 Resetting $branch to origin/$branch (discarding local changes)...${NC}"
+    git reset --hard "origin/$branch" || exit 1
+
+    echo -e "${BLUE}🧹 Removing untracked files and directories...${NC}"
+    git clean -fd || exit 1
+
+    echo -e "${GREEN}✅ Hard pull complete! Local branch '$branch' now matches origin/$branch${NC}"
+    commit_hash=$(git rev-parse --short HEAD)
+    echo -e "${GREEN}📌 Commit: $commit_hash${NC}"
+    exit 0
+fi
 
 # Check if empty string means reuse commit
 if [ "$commit_msg" = "" ]; then
@@ -175,5 +226,3 @@ else
     echo "  4. Use -f flag for force push (if you know what you're doing)"
     exit 1
 fi
-
-

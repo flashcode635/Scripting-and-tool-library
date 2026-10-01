@@ -1,0 +1,15 @@
+[package]
+name = "zipper"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+walkdir = "2"
+zip = "2"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true

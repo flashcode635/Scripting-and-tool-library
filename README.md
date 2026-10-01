@@ -10,6 +10,8 @@ Small collection of helper scripts for my day to day tasks.
 - `linux/mouse/start.sh` — Automate the start up commands for linux.
 - `office/script.js` — Used to bulk select check boxes in platforms like zoho marketing; operaitons ka kaam easily krne ke liye.
 - `NotesVault` — Simple Note taking app. Minimal, Browser based, works fine.
+- `Zipper` — A **CLI tool** to create zip archives while **respecting `.gitignore`** files. Built in Rust.
+
 
 Usage examples (Linux `gitpush`):
 

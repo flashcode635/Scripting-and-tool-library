@@ -62,8 +62,32 @@ This document serves as an immutable decision log (agent memory/cache) recording
 
 ---
 
-### Decision 8: Automatic Hidden Files & Build Caches Filtering (`hidden(true)`)
+### Decision 8: Preserve Repository Dotfiles with Explicit `.git` Exclusion
 - **Timestamp:** 2026-03-30T08:41:00Z
-- **Decision:** Configured `WalkBuilder` with `hidden(true)`.
-- **Context:** Modern web frameworks generate dense hidden build cache directories (`.next`, `.turbo`, `.git`).
-- **Reasoning:** Dropping hidden files and directories by default prevents archive bloat and avoids archiving redundant temporary build artifacts.
+- **Decision:** Configured `WalkBuilder` with `hidden(false)` while explicitly filtering out `.git` internal metadata directories during traversal.
+- **Context:** Setting `hidden(true)` unintentionally drops crucial repository configuration dotfiles (such as `.github`, `.gitignore`, `.eslintrc`, `.prettierrc`).
+- **Reasoning:** Developers expect version-controlled dotfiles and config directories to be preserved in repo archives. Setting `hidden(false)` while explicitly skipping `.git` directory trees ensures configuration files remain intact while excluding internal VCS database bloat.
+
+---
+
+### Decision 9: Tilde (`~`) Expansion & Smart Path Resolution
+- **Timestamp:** 2026-03-30T08:42:00Z
+- **Decision:** Implemented custom path normalization and tilde expansion (`~` / `~/...`) referencing the `$HOME` environment variable across both input and output paths, alongside automatic directory creation for missing destination folders.
+- **Context:** Shell shorthand like `zipper ~/my-project -o ~/Backups/` requires manual expansion if not handled by the shell or CLI wrapper.
+- **Reasoning:** Delivers predictable and cross-platform path resolution directly inside the CLI binary without relying on shell-specific expansion behaviors.
+
+---
+
+### Decision 10: Self-Archive Prevention
+- **Timestamp:** 2026-03-30T08:43:00Z
+- **Decision:** Canonicalized the output archive path and matched each traversed entry against it to skip the output zip file during compression.
+- **Context:** When running `zipper . -o output.zip` inside the target directory, the active archive file could be read as an input while being written.
+- **Reasoning:** Prevents recursive file reading/locking conflicts and avoids corrupted archives.
+
+---
+
+### Decision 11: Zip64 Support for Large Archives (`--large`)
+- **Timestamp:** 2026-03-30T08:44:00Z
+- **Decision:** Added `-l` / `--large` CLI flag that sets `SimpleFileOptions::large_file(true)`.
+- **Context:** Standard zip formats fail when archiving directories or individual files exceeding 4GB.
+- **Reasoning:** Enables users to safely package large datasets or build artifacts while keeping standard 32-bit zip headers by default for standard repository archives.
